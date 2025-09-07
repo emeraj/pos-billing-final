@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Receipt, Barcode } from 'lucide-react';
+import { Search, Receipt, Barcode, Package } from 'lucide-react';
 import { Product, CartItem } from '../types';
 import { ProductCard } from './ProductCard';
 import { Cart } from './Cart';
@@ -88,19 +88,65 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onAddToCart={onAddToCart}
-            />
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
+        {searchTerm.trim() === '' ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <p className="text-gray-500">No products found matching your criteria</p>
+            <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+            <p className="text-gray-500">Start typing to search products by name or scan barcode</p>
+            <p className="text-sm text-gray-400 mt-2">Products will appear here as you type</p>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={onAddToCart}
+                />
+              ))}
+            </div>
+
+            {filteredProducts.length === 0 && (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <p className="text-gray-500">No products found matching "{searchTerm}"</p>
+                <p className="text-sm text-gray-400 mt-2">Try a different search term or check the spelling</p>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Cart Section */}
+      <div className="space-y-4">
+        <Cart
+          items={cartItems}
+          onUpdateQuantity={onUpdateQuantity}
+          onRemoveItem={onRemoveFromCart}
+          isInterState={isInterState}
+          onToggleInterState={onToggleInterState}
+        />
+        
+        {cartItems.length > 0 && (
+          <button
+            onClick={() => setShowInvoiceModal(true)}
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 font-semibold transition-colors duration-200"
+          >
+            <Receipt className="w-5 h-5" />
+            <span>Generate Bill</span>
+          </button>
+        )}
+      </div>
+
+      <InvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        items={cartItems}
+        isInterState={isInterState}
+        onGenerateInvoice={handleGenerateInvoice}
+      />
+    </div>
+  );
+};
           </div>
         )}
       </div>
