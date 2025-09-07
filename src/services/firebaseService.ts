@@ -12,7 +12,7 @@ import {
   Timestamp 
 } from 'firebase/firestore';
 import { db } from '../config/firebase';
-import { Product, Invoice, Customer, BusinessProfile } from '../types';
+import { Product, Invoice, Customer, BusinessProfile, Category, GSTRate } from '../types';
 import { auth } from '../config/firebase';
 
 // Helper function to get current user's UID
@@ -156,6 +156,84 @@ export const saveBusinessProfile = async (profile: BusinessProfile): Promise<voi
   }
 };
 
+// Categories
+export const getCategories = async (): Promise<Category[]> => {
+  try {
+    const querySnapshot = await getDocs(collection(db, getUserCollection('categories')));
+    const categories = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as Category));
+    
+    // Return default categories if none exist
+    if (categories.length === 0) {
+      return getDefaultCategories();
+    }
+    return categories;
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return getDefaultCategories();
+  }
+};
+
+export const addCategory = async (category: Omit<Category, 'id'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, getUserCollection('categories')), category);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding category:', error);
+    throw error;
+  }
+};
+
+export const deleteCategory = async (id: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, getUserCollection('categories'), id));
+  } catch (error) {
+    console.error('Error deleting category:', error);
+    throw error;
+  }
+};
+
+// GST Rates
+export const getGSTRates = async (): Promise<GSTRate[]> => {
+  try {
+    const querySnapshot = await getDocs(collection(db, getUserCollection('gstRates')));
+    const gstRates = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    } as GSTRate));
+    
+    // Return default GST rates if none exist
+    if (gstRates.length === 0) {
+      return getDefaultGSTRates();
+    }
+    return gstRates;
+  } catch (error) {
+    console.error('Error fetching GST rates:', error);
+    return getDefaultGSTRates();
+  }
+};
+
+export const addGSTRate = async (gstRate: Omit<GSTRate, 'id'>): Promise<string> => {
+  try {
+    const docRef = await addDoc(collection(db, getUserCollection('gstRates')), gstRate);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding GST rate:', error);
+    throw error;
+  }
+};
+
+export const deleteGSTRate = async (id: string): Promise<void> => {
+  try {
+    await deleteDoc(doc(db, getUserCollection('gstRates'), id));
+  } catch (error) {
+    console.error('Error deleting GST rate:', error);
+    throw error;
+  }
+};
+
 const getDefaultBusinessProfile = (): BusinessProfile => ({
   name: 'Your Business Name',
   address: 'Shop Address Line 1',
@@ -218,6 +296,22 @@ const getDefaultProducts = (): Product[] => [
     gstRate: 12,
     hsnCode: '6109'
   }
+];
+
+const getDefaultCategories = (): Category[] => [
+  { id: '1', name: 'Grocery', description: 'Food and daily essentials' },
+  { id: '2', name: 'Electronics', description: 'Electronic items and gadgets' },
+  { id: '3', name: 'Clothing', description: 'Apparel and accessories' },
+  { id: '4', name: 'Home & Garden', description: 'Home improvement and garden items' },
+  { id: '5', name: 'Health & Beauty', description: 'Personal care and health products' }
+];
+
+const getDefaultGSTRates = (): GSTRate[] => [
+  { id: '1', rate: 0, description: 'Exempt - Essential items' },
+  { id: '2', rate: 5, description: 'Low Rate - Basic necessities' },
+  { id: '3', rate: 12, description: 'Standard Rate - Processed foods' },
+  { id: '4', rate: 18, description: 'Standard Rate - Most goods' },
+  { id: '5', rate: 28, description: 'High Rate - Luxury items' }
 ];
 
 // Real-time listeners

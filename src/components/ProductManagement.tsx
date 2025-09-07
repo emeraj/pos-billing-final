@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { Package, Plus, Edit, Trash2, Save, X, Barcode } from 'lucide-react';
 import { Product } from '../types';
 import { formatCurrency } from '../utils/gst';
+import { CategorySelector } from './CategorySelector';
+import { GSTRateSelector } from './GSTRateSelector';
+import { useFirebaseCategories, useFirebaseGSTRates } from '../hooks/useFirebase';
+import { useAuth } from '../hooks/useAuth';
 
 interface ProductManagementProps {
   products: Product[];
@@ -16,6 +20,10 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
   onUpdateProduct,
   onDeleteProduct
 }) => {
+  const { user } = useAuth();
+  const { categories, addCategory } = useFirebaseCategories(user);
+  const { gstRates, addGSTRate } = useFirebaseGSTRates(user);
+  
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -147,12 +155,12 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category *
                 </label>
-                <input
-                  type="text"
+                <CategorySelector
+                  categories={categories}
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, category: value })}
+                  onAddCategory={addCategory}
                   required
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
@@ -171,17 +179,13 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   GST Rate (%) *
                 </label>
-                <select
+                <GSTRateSelector
+                  gstRates={gstRates}
                   value={formData.gstRate}
-                  onChange={(e) => setFormData({ ...formData, gstRate: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="0">0%</option>
-                  <option value="5">5%</option>
-                  <option value="12">12%</option>
-                  <option value="18">18%</option>
-                  <option value="28">28%</option>
-                </select>
+                  onChange={(value) => setFormData({ ...formData, gstRate: value })}
+                  onAddGSTRate={addGSTRate}
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

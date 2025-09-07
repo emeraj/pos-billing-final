@@ -4,6 +4,8 @@ import { Product, CartItem } from '../types';
 import { ProductCard } from './ProductCard';
 import { Cart } from './Cart';
 import { InvoiceModal } from './InvoiceModal';
+import { useFirebaseCategories } from '../hooks/useFirebase';
+import { useAuth } from '../hooks/useAuth';
 
 interface POSInterfaceProps {
   products: Product[];
@@ -26,11 +28,14 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
   isInterState,
   onToggleInterState
 }) => {
+  const { user } = useAuth();
+  const { categories } = useFirebaseCategories(user);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+  const categoryOptions = ['All', ...categories.map(c => c.name)];
   
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,7 +86,7 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              {categories.map(category => (
+              {categoryOptions.map(category => (
                 <option key={category} value={category}>{category}</option>
               ))}
             </select>

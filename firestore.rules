@@ -26,6 +26,16 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
+    // Users can only access their own categories
+    match /users/{userId}/categories/{categoryId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Users can only access their own GST rates
+    match /users/{userId}/gstRates/{gstRateId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+    
     // Deny all other access
     match /{document=**} {
       allow read, write: if false;

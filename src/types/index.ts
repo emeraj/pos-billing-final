@@ -54,3 +54,15 @@ export interface BusinessProfile {
   gstNumber: string;
   logo?: string;
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface GSTRate {
+  id: string;
+  rate: number;
+  description: string;
+}

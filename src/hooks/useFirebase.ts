@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Product, Invoice, Customer, BusinessProfile } from '../types';
+import { Product, Invoice, Customer, BusinessProfile, Category, GSTRate } from '../types';
 import * as firebaseService from '../services/firebaseService';
 import { User } from 'firebase/auth';
 
@@ -158,5 +158,121 @@ export const useFirebaseBusinessProfile = () => {
     loading,
     error,
     updateProfile
+  };
+};
+
+export const useFirebaseCategories = (user: User | null) => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setCategories([]);
+      setLoading(false);
+      return;
+    }
+
+    const loadCategories = async () => {
+      try {
+        setLoading(true);
+        const data = await firebaseService.getCategories();
+        setCategories(data);
+      } catch (err) {
+        setError('Failed to load categories');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, [user]);
+
+  const addCategory = async (categoryData: Omit<Category, 'id'>) => {
+    try {
+      const id = await firebaseService.addCategory(categoryData);
+      setCategories(prev => [...prev, { ...categoryData, id }]);
+      return id;
+    } catch (err) {
+      setError('Failed to add category');
+      throw err;
+    }
+  };
+
+  const deleteCategory = async (id: string) => {
+    try {
+      await firebaseService.deleteCategory(id);
+      setCategories(prev => prev.filter(cat => cat.id !== id));
+    } catch (err) {
+      setError('Failed to delete category');
+      throw err;
+    }
+  };
+
+  return {
+    categories,
+    loading,
+    error,
+    addCategory,
+    deleteCategory
+  };
+};
+
+export const useFirebaseGSTRates = (user: User | null) => {
+  const [gstRates, setGSTRates] = useState<GSTRate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) {
+      setGSTRates([]);
+      setLoading(false);
+      return;
+    }
+
+    const loadGSTRates = async () => {
+      try {
+        setLoading(true);
+        const data = await firebaseService.getGSTRates();
+        setGSTRates(data);
+      } catch (err) {
+        setError('Failed to load GST rates');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGSTRates();
+  }, [user]);
+
+  const addGSTRate = async (gstRateData: Omit<GSTRate, 'id'>) => {
+    try {
+      const id = await firebaseService.addGSTRate(gstRateData);
+      setGSTRates(prev => [...prev, { ...gstRateData, id }]);
+      return id;
+    } catch (err) {
+      setError('Failed to add GST rate');
+      throw err;
+    }
+  };
+
+  const deleteGSTRate = async (id: string) => {
+    try {
+      await firebaseService.deleteGSTRate(id);
+      setGSTRates(prev => prev.filter(rate => rate.id !== id));
+    } catch (err) {
+      setError('Failed to delete GST rate');
+      throw err;
+    }
+  };
+
+  return {
+    gstRates,
+    loading,
+    error,
+    addGSTRate,
+    deleteGSTRate
   };
 };
