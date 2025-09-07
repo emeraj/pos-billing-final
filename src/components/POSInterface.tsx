@@ -52,6 +52,7 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
       setSearchTerm(''); // Clear search after adding
     }
   };
+  
   const handleGenerateInvoice = (customer: any, paymentMethod: any) => {
     onGenerateInvoice(customer, paymentMethod);
     setShowInvoiceModal(false);
