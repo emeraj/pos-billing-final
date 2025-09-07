@@ -52,6 +52,7 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
       setSearchTerm(''); // Clear search after adding
     }
   };
+  
   const handleGenerateInvoice = (customer: any, paymentMethod: any) => {
     onGenerateInvoice(customer, paymentMethod);
     setShowInvoiceModal(false);
@@ -113,41 +114,6 @@ export const POSInterface: React.FC<POSInterfaceProps> = ({
               </div>
             )}
           </>
-        )}
-      </div>
-
-      {/* Cart Section */}
-      <div className="space-y-4">
-        <Cart
-          items={cartItems}
-          onUpdateQuantity={onUpdateQuantity}
-          onRemoveItem={onRemoveFromCart}
-          isInterState={isInterState}
-          onToggleInterState={onToggleInterState}
-        />
-        
-        {cartItems.length > 0 && (
-          <button
-            onClick={() => setShowInvoiceModal(true)}
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center space-x-2 font-semibold transition-colors duration-200"
-          >
-            <Receipt className="w-5 h-5" />
-            <span>Generate Bill</span>
-          </button>
-        )}
-      </div>
-
-      <InvoiceModal
-        isOpen={showInvoiceModal}
-        onClose={() => setShowInvoiceModal(false)}
-        items={cartItems}
-        isInterState={isInterState}
-        onGenerateInvoice={handleGenerateInvoice}
-      />
-    </div>
-  );
-};
-          </div>
         )}
       </div>
 
