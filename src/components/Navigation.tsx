@@ -28,8 +28,8 @@ export const Navigation: React.FC<NavigationProps> = ({
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
-            <BarChart3 className="w-8 h-8 text-blue-600" />
-            <h1 className="text-xl font-bold text-gray-800">EasyPOS</h1>
+            <img src="/logo.png" alt="Msoft-POS" className="w-8 h-8" />
+            <h1 className="text-xl font-bold text-gray-800">Msoft-POS</h1>
           </div>
           
           <div className="flex items-center space-x-4">
