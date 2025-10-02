@@ -155,35 +155,13 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Category *
                 </label>
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <CategorySelector
-                      categories={categories}
-                      value={formData.category}
-                      onChange={(value) => setFormData({ ...formData, category: value })}
-                      onAddCategory={addCategory}
-                      required
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const categoryName = prompt('Enter new category name:');
-                      if (categoryName && categoryName.trim()) {
-                        addCategory({ name: categoryName.trim(), description: '' })
-                          .then(() => {
-                            setFormData({ ...formData, category: categoryName.trim() });
-                          })
-                          .catch(err => alert('Failed to add category'));
-                      }
-                    }}
-                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 whitespace-nowrap"
-                    title="Quick add category"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="text-sm">Add Category</span>
-                  </button>
-                </div>
+                <CategorySelector
+                  categories={categories}
+                  value={formData.category}
+                  onChange={(value) => setFormData({ ...formData, category: value })}
+                  onAddCategory={addCategory}
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -201,41 +179,13 @@ export const ProductManagement: React.FC<ProductManagementProps> = ({
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   GST Rate (%) *
                 </label>
-                <div className="flex space-x-2">
-                  <div className="flex-1">
-                    <GSTRateSelector
-                      gstRates={gstRates}
-                      value={formData.gstRate}
-                      onChange={(value) => setFormData({ ...formData, gstRate: value })}
-                      onAddGSTRate={addGSTRate}
-                      required
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const rateInput = prompt('Enter GST rate (e.g., 18):');
-                      if (rateInput && !isNaN(parseFloat(rateInput))) {
-                        const rate = parseFloat(rateInput);
-                        if (rate >= 0 && rate <= 100) {
-                          const description = prompt('Enter description (optional):') || `${rate}% GST`;
-                          addGSTRate({ rate, description })
-                            .then(() => {
-                              setFormData({ ...formData, gstRate: rate.toString() });
-                            })
-                            .catch(err => alert('Failed to add GST rate'));
-                        } else {
-                          alert('Please enter a valid GST rate between 0 and 100');
-                        }
-                      }
-                    }}
-                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200 whitespace-nowrap"
-                    title="Quick add GST rate"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span className="text-sm">Add GST Rate</span>
-                  </button>
-                </div>
+                <GSTRateSelector
+                  gstRates={gstRates}
+                  value={formData.gstRate}
+                  onChange={(value) => setFormData({ ...formData, gstRate: value })}
+                  onAddGSTRate={addGSTRate}
+                  required
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -55,7 +55,7 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
   };
 
   const categoryExists = categories.some(cat => cat.name.toLowerCase() === value.toLowerCase());
-  const showAddButton = value.trim() && !categoryExists && !showAddForm;
+  const showAddButton = !showAddForm && (!value.trim() || !categoryExists);
 
   return (
     <div className="space-y-2">
@@ -75,10 +75,10 @@ export const CategorySelector: React.FC<CategorySelectorProps> = ({
             type="button"
             onClick={() => setShowAddForm(true)}
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
-            title="Add new category"
+            title="Add category"
           >
             <Plus className="w-4 h-4" />
-            <span className="text-sm">Add</span>
+            <span className="text-sm">Add Category</span>
           </button>
         )}
       </div>

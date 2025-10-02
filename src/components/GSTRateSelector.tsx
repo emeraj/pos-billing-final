@@ -59,7 +59,7 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
   };
 
   const rateExists = gstRates.some(rate => rate.rate.toString() === value);
-  const showAddButton = value.trim() && !rateExists && !showAddForm && !isNaN(parseFloat(value));
+  const showAddButton = !showAddForm;
 
   return (
     <div className="space-y-2">
@@ -83,10 +83,10 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
             type="button"
             onClick={() => setShowAddForm(true)}
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
-            title="Add new GST rate"
+            title="Add GST rate"
           >
             <Plus className="w-4 h-4" />
-            <span className="text-sm">Add</span>
+            <span className="text-sm">Add GST</span>
           </button>
         )}
       </div>
