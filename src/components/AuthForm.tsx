@@ -33,7 +33,6 @@ export const AuthForm: React.FC<AuthFormProps> = ({
           <div className="bg-blue-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
             <img src="/logo.png" alt="Msoft-POS" className="w-8 h-8 rounded-full" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-800">EasyPOS</h1>
           <h1 className="text-2xl font-bold text-gray-800">Msoft-POS</h1>
           <p className="text-gray-600 mt-2">
             {isLogin ? 'Welcome back! Please sign in.' : 'Create your account to get started.'}
