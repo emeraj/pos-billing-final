@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User } from 'firebase/auth';
+import { User } from '@supabase/supabase-js';
 import { onAuthStateChange, signUp, signIn, logOut, getUserProfile, UserProfile } from '../services/authService';
 
 export const useAuth = () => {
@@ -15,7 +15,7 @@ export const useAuth = () => {
       
       if (user) {
         // Load user profile
-        const profile = await getUserProfile(user.uid);
+        const profile = await getUserProfile(user.id);
         setUserProfile(profile);
       } else {
         setUserProfile(null);
@@ -69,24 +69,21 @@ export const useAuth = () => {
   };
 
   const getErrorMessage = (error: any): string => {
-    switch (error.code) {
-      case 'auth/invalid-credential':
-        return 'Invalid email or password. Please check your credentials and try again.';
-      case 'auth/email-already-in-use':
-        return 'This email is already registered. Please sign in instead.';
-      case 'auth/weak-password':
-        return 'Password is too weak. Please choose a stronger password.';
-      case 'auth/invalid-email':
-        return 'Please enter a valid email address.';
-      case 'auth/user-not-found':
-        return 'No account found with this email. Please sign up first.';
-      case 'auth/wrong-password':
-        return 'Incorrect password. Please try again.';
-      case 'auth/too-many-requests':
-        return 'Too many failed attempts. Please try again later.';
-      default:
-        return error.message || 'An error occurred. Please try again.';
+    const message = error.message || '';
+
+    if (message.includes('Invalid login credentials')) {
+      return 'Invalid email or password. Please check your credentials and try again.';
+    } else if (message.includes('User already registered')) {
+      return 'This email is already registered. Please sign in instead.';
+    } else if (message.includes('Password should be at least')) {
+      return 'Password is too weak. Please choose a stronger password.';
+    } else if (message.includes('invalid email')) {
+      return 'Please enter a valid email address.';
+    } else if (message.includes('too many requests')) {
+      return 'Too many failed attempts. Please try again later.';
     }
+
+    return error.message || 'An error occurred. Please try again.';
   };
 
   return {

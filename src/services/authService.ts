@@ -1,14 +1,5 @@
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  updateProfile,
-  User
-} from 'firebase/auth';
-import { auth } from '../config/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { supabase } from '../config/supabase';
+import { User } from '@supabase/supabase-js';
 
 export interface UserProfile {
   uid: string;
@@ -19,21 +10,20 @@ export interface UserProfile {
 
 export const signUp = async (email: string, password: string, displayName: string): Promise<User> => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    
-    // Update the user's display name
-    await updateProfile(user, { displayName });
-    
-    // Save user profile to Firestore
-    await setDoc(doc(db, 'users', user.uid), {
-      uid: user.uid,
-      email: user.email,
-      displayName,
-      createdAt: new Date().toISOString()
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          display_name: displayName
+        }
+      }
     });
-    
-    return user;
+
+    if (error) throw error;
+    if (!data.user) throw new Error('User creation failed');
+
+    return data.user;
   } catch (error) {
     console.error('Error signing up:', error);
     throw error;
@@ -42,8 +32,15 @@ export const signUp = async (email: string, password: string, displayName: strin
 
 export const signIn = async (email: string, password: string): Promise<User> => {
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    return userCredential.user;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error('Sign in failed');
+
+    return data.user;
   } catch (error) {
     throw error;
   }
@@ -51,7 +48,8 @@ export const signIn = async (email: string, password: string): Promise<User> => 
 
 export const logOut = async (): Promise<void> => {
   try {
-    await signOut(auth);
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
   } catch (error) {
     console.error('Error signing out:', error);
     throw error;
@@ -60,11 +58,15 @@ export const logOut = async (): Promise<void> => {
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
   try {
-    const docRef = doc(db, 'users', uid);
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      return docSnap.data() as UserProfile;
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      return {
+        uid: user.id,
+        email: user.email || '',
+        displayName: user.user_metadata?.display_name || user.email?.split('@')[0] || 'User',
+        createdAt: user.created_at
+      };
     }
     return null;
   } catch (error) {
@@ -74,5 +76,9 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
 };
 
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, callback);
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    callback(session?.user || null);
+  });
+
+  return data.subscription.unsubscribe;
 };
