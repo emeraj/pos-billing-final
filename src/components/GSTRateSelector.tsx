@@ -32,7 +32,7 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
 
     setAdding(true);
     try {
-      await onAddGSTRate({
+      const id = await onAddGSTRate({
         rate,
         description: newDescription.trim() || `${rate}% GST`
       });
@@ -43,7 +43,7 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
       // Reset form
       setNewRate('');
       setNewDescription('');
-      setShowAddForm(false);
+      // Don't close the form - keep it open for more additions
     } catch (error) {
       console.error('Error adding GST rate:', error);
       alert('Failed to add GST rate. Please try again.');
@@ -58,7 +58,6 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
     setShowAddForm(false);
   };
 
-  const rateExists = gstRates.some(rate => rate.rate.toString() === value);
   const showAddButton = !showAddForm;
 
   return (
@@ -93,6 +92,7 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
 
       {showAddForm && (
         <div className="border border-gray-200 rounded-lg p-3 bg-gray-50">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">Add New GST Rate</h4>
           <form onSubmit={handleAddGSTRate} className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -108,7 +108,6 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter GST rate (e.g., 18)"
-                autoFocus
               />
             </div>
             <div>
@@ -131,7 +130,7 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
                 className="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
               >
                 <Plus className="w-4 h-4" />
-                <span>{adding ? 'Adding...' : 'Add Rate'}</span>
+                <span>{adding ? 'Adding...' : 'Add & Continue'}</span>
               </button>
               <button
                 type="button"
@@ -140,10 +139,13 @@ export const GSTRateSelector: React.FC<GSTRateSelectorProps> = ({
                 className="bg-gray-500 hover:bg-gray-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg flex items-center space-x-1 transition-colors duration-200"
               >
                 <X className="w-4 h-4" />
-                <span>Cancel</span>
+                <span>Close</span>
               </button>
             </div>
           </form>
+          <div className="mt-2 text-xs text-gray-500">
+            Form will stay open for adding multiple GST rates. Click "Close" when done.
+          </div>
         </div>
       )}
     </div>
