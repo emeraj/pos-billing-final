@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Plus, Edit, Trash2, Save, X, Barcode } from 'lucide-react';
+import { Package, Plus, CreditCard as Edit, Trash2, Save, X, Barcode } from 'lucide-react';
 import { Product } from '../types';
 import { formatCurrency } from '../utils/gst';
 import { CategorySelector } from './CategorySelector';
