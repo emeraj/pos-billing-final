@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, Edit2, Check, X, Tag, Percent } from 'lucide-react';
+import { Plus, Trash2, CreditCard as Edit2, Check, X, Tag, Percent } from 'lucide-react';
 import { Category, GSTRate } from '../types';
 
 interface SettingsProps {
