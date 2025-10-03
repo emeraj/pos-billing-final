@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Package, Clock, BarChart3, Building2, LogOut, User } from 'lucide-react';
+import { ShoppingCart, Package, Clock, BarChart3, Building2, LogOut, User, Settings } from 'lucide-react';
 
 interface NavigationProps {
   activeTab: string;
@@ -9,17 +9,18 @@ interface NavigationProps {
   onSignOut: () => void;
 }
 
-export const Navigation: React.FC<NavigationProps> = ({ 
-  activeTab, 
-  onTabChange, 
-  cartItemCount, 
-  user, 
-  onSignOut 
+export const Navigation: React.FC<NavigationProps> = ({
+  activeTab,
+  onTabChange,
+  cartItemCount,
+  user,
+  onSignOut
 }) => {
   const tabs = [
     { id: 'pos', name: 'POS', icon: ShoppingCart, badge: cartItemCount > 0 ? cartItemCount : undefined },
     { id: 'products', name: 'Products', icon: Package },
     { id: 'history', name: 'Sales', icon: Clock },
+    { id: 'settings', name: 'Settings', icon: Settings },
     { id: 'profile', name: 'Business', icon: Building2 },
   ];
 

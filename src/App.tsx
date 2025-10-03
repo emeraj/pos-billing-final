@@ -5,6 +5,7 @@ import { POSInterface } from './components/POSInterface';
 import { ProductManagement } from './components/ProductManagement';
 import { SalesHistory } from './components/SalesHistory';
 import { BusinessProfile } from './components/BusinessProfile';
+import { Settings } from './components/Settings';
 import { Invoice } from './components/Invoice';
 import { Product, CartItem, Invoice as InvoiceType, Customer } from './types';
 import { useFirebaseProducts, useFirebaseInvoices } from './hooks/useFirebase';
@@ -204,7 +205,21 @@ function App() {
             onViewInvoice={setSelectedInvoice}
           />
         )}
-        
+
+        {activeTab === 'settings' && user && (
+          <Settings
+            userId={user.uid}
+            onLoadCategories={firebaseService.getCategories}
+            onLoadGSTRates={firebaseService.getGSTRates}
+            onAddCategory={firebaseService.addCategory}
+            onAddGSTRate={firebaseService.addGSTRate}
+            onDeleteCategory={firebaseService.deleteCategory}
+            onDeleteGSTRate={firebaseService.deleteGSTRate}
+            onUpdateCategory={firebaseService.updateCategory}
+            onUpdateGSTRate={firebaseService.updateGSTRate}
+          />
+        )}
+
         {activeTab === 'profile' && (
           <BusinessProfile />
         )}

@@ -186,6 +186,15 @@ export const addCategory = async (category: Omit<Category, 'id'>): Promise<strin
   }
 };
 
+export const updateCategory = async (id: string, category: Omit<Category, 'id'>): Promise<void> => {
+  try {
+    await updateDoc(doc(db, getUserCollection('categories'), id), category);
+  } catch (error) {
+    console.error('Error updating category:', error);
+    throw error;
+  }
+};
+
 export const deleteCategory = async (id: string): Promise<void> => {
   try {
     await deleteDoc(doc(db, getUserCollection('categories'), id));
@@ -221,6 +230,15 @@ export const addGSTRate = async (gstRate: Omit<GSTRate, 'id'>): Promise<string> 
     return docRef.id;
   } catch (error) {
     console.error('Error adding GST rate:', error);
+    throw error;
+  }
+};
+
+export const updateGSTRate = async (id: string, gstRate: Omit<GSTRate, 'id'>): Promise<void> => {
+  try {
+    await updateDoc(doc(db, getUserCollection('gstRates'), id), gstRate);
+  } catch (error) {
+    console.error('Error updating GST rate:', error);
     throw error;
   }
 };
