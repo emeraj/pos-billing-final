@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { AuthForm } from './components/AuthForm';
 import { Navigation } from './components/Navigation';
 import { POSInterface } from './components/POSInterface';
-import { ProductManagement } from './components/ProductManagement';
+import { Masters } from './components/Masters';
 import { SalesHistory } from './components/SalesHistory';
 import { BusinessProfile } from './components/BusinessProfile';
-import { Settings } from './components/Settings';
 import { Invoice } from './components/Invoice';
 import { Product, CartItem, Invoice as InvoiceType, Customer } from './types';
 import { useFirebaseProducts, useFirebaseInvoices } from './hooks/useFirebase';
@@ -190,25 +189,12 @@ function App() {
           />
         )}
         
-        {activeTab === 'products' && (
-          <ProductManagement
-            products={products}
-            onAddProduct={addProduct}
-            onUpdateProduct={updateProduct}
-            onDeleteProduct={deleteProduct}
-          />
-        )}
-        
-        {activeTab === 'history' && (
-          <SalesHistory
-            invoices={invoices}
-            onViewInvoice={setSelectedInvoice}
-          />
-        )}
-
-        {activeTab === 'settings' && user && (
-          <Settings
+        {activeTab === 'masters' && user && (
+          <Masters
             userId={user.uid}
+            products={products}
+            categories={[]}
+            gstRates={[]}
             onLoadCategories={firebaseService.getCategories}
             onLoadGSTRates={firebaseService.getGSTRates}
             onAddCategory={firebaseService.addCategory}
@@ -217,6 +203,16 @@ function App() {
             onDeleteGSTRate={firebaseService.deleteGSTRate}
             onUpdateCategory={firebaseService.updateCategory}
             onUpdateGSTRate={firebaseService.updateGSTRate}
+            onAddProduct={addProduct}
+            onUpdateProduct={updateProduct}
+            onDeleteProduct={deleteProduct}
+          />
+        )}
+
+        {activeTab === 'history' && (
+          <SalesHistory
+            invoices={invoices}
+            onViewInvoice={setSelectedInvoice}
           />
         )}
 

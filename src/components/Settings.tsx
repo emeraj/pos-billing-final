@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, CreditCard as Edit2, Check, X, Tag, Percent } from 'lucide-react';
-import { Category, GSTRate } from '../types';
+import { Plus, Trash2, Edit2, Check, X, Tag, Percent, Package } from 'lucide-react';
+import { Category, GSTRate, Product } from '../types';
 
 interface SettingsProps {
   userId: string;
+  products: Product[];
   onLoadCategories: () => Promise<Category[]>;
   onLoadGSTRates: () => Promise<GSTRate[]>;
   onAddCategory: (category: Omit<Category, 'id'>) => Promise<string>;
@@ -12,10 +13,14 @@ interface SettingsProps {
   onDeleteGSTRate: (id: string) => Promise<void>;
   onUpdateCategory: (id: string, category: Omit<Category, 'id'>) => Promise<void>;
   onUpdateGSTRate: (id: string, gstRate: Omit<GSTRate, 'id'>) => Promise<void>;
+  onAddProduct: (product: Omit<Product, 'id'>) => Promise<void>;
+  onUpdateProduct: (id: string, product: Omit<Product, 'id'>) => Promise<void>;
+  onDeleteProduct: (id: string) => Promise<void>;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
   userId,
+  products,
   onLoadCategories,
   onLoadGSTRates,
   onAddCategory,
@@ -24,10 +29,14 @@ export const Settings: React.FC<SettingsProps> = ({
   onDeleteGSTRate,
   onUpdateCategory,
   onUpdateGSTRate,
+  onAddProduct,
+  onUpdateProduct,
+  onDeleteProduct,
 }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [gstRates, setGSTRates] = useState<GSTRate[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeSection, setActiveSection] = useState<'products' | 'categories' | 'gst'>('products');
 
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryDescription, setNewCategoryDescription] = useState('');
