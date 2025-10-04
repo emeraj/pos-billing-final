@@ -19,8 +19,8 @@ export const Navigation: React.FC<NavigationProps> = ({
   const tabs = [
     { id: 'pos', name: 'POS', icon: ShoppingCart, badge: cartItemCount > 0 ? cartItemCount : undefined },
     { id: 'products', name: 'Products', icon: Package },
-    { id: 'history', name: 'Sales', icon: Clock },
-    { id: 'settings', name: 'Settings', icon: Settings },
+    { id: 'history', name: 'Sale Reports', icon: Clock },
+    { id: 'settings', name: 'Masters', icon: Settings },
     { id: 'profile', name: 'Business', icon: Building2 },
   ];
 
