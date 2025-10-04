@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Product, Invoice, Customer, BusinessProfile, Category, GSTRate } from '../types';
-import * as supabaseService from '../services/supabaseService';
-import { User } from '@supabase/supabase-js';
+import * as firebaseService from '../services/firebaseService';
+import { User } from 'firebase/auth';
 
 export const useFirebaseProducts = (user: User | null) => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -18,7 +18,7 @@ export const useFirebaseProducts = (user: User | null) => {
     const loadProducts = async () => {
       try {
         setLoading(true);
-        const data = await supabaseService.getProducts();
+        const data = await firebaseService.getProducts();
         setProducts(data);
       } catch (err) {
         setError('Failed to load products');
@@ -31,13 +31,13 @@ export const useFirebaseProducts = (user: User | null) => {
     loadProducts();
 
     // Set up real-time listener
-    const unsubscribe = supabaseService.subscribeToProducts(setProducts);
+    const unsubscribe = firebaseService.subscribeToProducts(setProducts);
     return () => unsubscribe();
   }, [user]);
 
   const addProduct = async (productData: Omit<Product, 'id'>) => {
     try {
-      await supabaseService.addProduct(productData);
+      await firebaseService.addProduct(productData);
     } catch (err) {
       setError('Failed to add product');
       throw err;
@@ -46,7 +46,7 @@ export const useFirebaseProducts = (user: User | null) => {
 
   const updateProduct = async (id: string, productData: Omit<Product, 'id'>) => {
     try {
-      await supabaseService.updateProduct(id, productData);
+      await firebaseService.updateProduct(id, productData);
     } catch (err) {
       setError('Failed to update product');
       throw err;
@@ -55,7 +55,7 @@ export const useFirebaseProducts = (user: User | null) => {
 
   const deleteProduct = async (id: string) => {
     try {
-      await supabaseService.deleteProduct(id);
+      await firebaseService.deleteProduct(id);
     } catch (err) {
       setError('Failed to delete product');
       throw err;
@@ -87,7 +87,7 @@ export const useFirebaseInvoices = (user: User | null) => {
     const loadInvoices = async () => {
       try {
         setLoading(true);
-        const data = await supabaseService.getInvoices();
+        const data = await firebaseService.getInvoices();
         setInvoices(data);
       } catch (err) {
         setError('Failed to load invoices');
@@ -100,13 +100,13 @@ export const useFirebaseInvoices = (user: User | null) => {
     loadInvoices();
 
     // Set up real-time listener
-    const unsubscribe = supabaseService.subscribeToInvoices(setInvoices);
+    const unsubscribe = firebaseService.subscribeToInvoices(setInvoices);
     return () => unsubscribe();
   }, [user]);
 
   const addInvoice = async (invoiceData: Omit<Invoice, 'id'>) => {
     try {
-      return await supabaseService.addInvoice(invoiceData);
+      return await firebaseService.addInvoice(invoiceData);
     } catch (err) {
       setError('Failed to save invoice');
       throw err;
@@ -130,7 +130,7 @@ export const useFirebaseBusinessProfile = () => {
     const loadProfile = async () => {
       try {
         setLoading(true);
-        const data = await supabaseService.getBusinessProfile();
+        const data = await firebaseService.getBusinessProfile();
         setProfile(data);
       } catch (err) {
         setError('Failed to load business profile');
@@ -145,7 +145,7 @@ export const useFirebaseBusinessProfile = () => {
 
   const updateProfile = async (profileData: BusinessProfile) => {
     try {
-      await supabaseService.saveBusinessProfile(profileData);
+      await firebaseService.saveBusinessProfile(profileData);
       setProfile(profileData);
     } catch (err) {
       setError('Failed to save business profile');
@@ -176,7 +176,7 @@ export const useFirebaseCategories = (user: User | null) => {
     const loadCategories = async () => {
       try {
         setLoading(true);
-        const data = await supabaseService.getCategories();
+        const data = await firebaseService.getCategories();
         setCategories(data);
       } catch (err) {
         setError('Failed to load categories');
@@ -191,7 +191,7 @@ export const useFirebaseCategories = (user: User | null) => {
 
   const addCategory = async (categoryData: Omit<Category, 'id'>) => {
     try {
-      const id = await supabaseService.addCategory(categoryData);
+      const id = await firebaseService.addCategory(categoryData);
       setCategories(prev => [...prev, { ...categoryData, id }]);
       return id;
     } catch (err) {
@@ -202,7 +202,7 @@ export const useFirebaseCategories = (user: User | null) => {
 
   const deleteCategory = async (id: string) => {
     try {
-      await supabaseService.deleteCategory(id);
+      await firebaseService.deleteCategory(id);
       setCategories(prev => prev.filter(cat => cat.id !== id));
     } catch (err) {
       setError('Failed to delete category');
@@ -234,7 +234,7 @@ export const useFirebaseGSTRates = (user: User | null) => {
     const loadGSTRates = async () => {
       try {
         setLoading(true);
-        const data = await supabaseService.getGSTRates();
+        const data = await firebaseService.getGSTRates();
         setGSTRates(data);
       } catch (err) {
         setError('Failed to load GST rates');
@@ -249,7 +249,7 @@ export const useFirebaseGSTRates = (user: User | null) => {
 
   const addGSTRate = async (gstRateData: Omit<GSTRate, 'id'>) => {
     try {
-      const id = await supabaseService.addGSTRate(gstRateData);
+      const id = await firebaseService.addGSTRate(gstRateData);
       setGSTRates(prev => [...prev, { ...gstRateData, id }]);
       return id;
     } catch (err) {
@@ -260,7 +260,7 @@ export const useFirebaseGSTRates = (user: User | null) => {
 
   const deleteGSTRate = async (id: string) => {
     try {
-      await supabaseService.deleteGSTRate(id);
+      await firebaseService.deleteGSTRate(id);
       setGSTRates(prev => prev.filter(rate => rate.id !== id));
     } catch (err) {
       setError('Failed to delete GST rate');

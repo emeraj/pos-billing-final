@@ -1,5 +1,12 @@
-import { supabase } from '../config/supabase';
-import { User } from '@supabase/supabase-js';
+import { auth } from '../config/firebase';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  updateProfile,
+  User
+} from 'firebase/auth';
 
 export interface UserProfile {
   uid: string;
@@ -10,20 +17,14 @@ export interface UserProfile {
 
 export const signUp = async (email: string, password: string, displayName: string): Promise<User> => {
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: displayName
-        }
-      }
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await updateProfile(user, {
+      displayName: displayName
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error('User creation failed');
-
-    return data.user;
+    return user;
   } catch (error) {
     console.error('Error signing up:', error);
     throw error;
@@ -32,15 +33,8 @@ export const signUp = async (email: string, password: string, displayName: strin
 
 export const signIn = async (email: string, password: string): Promise<User> => {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-
-    if (error) throw error;
-    if (!data.user) throw new Error('Sign in failed');
-
-    return data.user;
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   } catch (error) {
     throw error;
   }
@@ -48,8 +42,7 @@ export const signIn = async (email: string, password: string): Promise<User> => 
 
 export const logOut = async (): Promise<void> => {
   try {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    await firebaseSignOut(auth);
   } catch (error) {
     console.error('Error signing out:', error);
     throw error;
@@ -58,14 +51,14 @@ export const logOut = async (): Promise<void> => {
 
 export const getUserProfile = async (uid: string): Promise<UserProfile | null> => {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const user = auth.currentUser;
 
     if (user) {
       return {
-        uid: user.id,
+        uid: user.uid,
         email: user.email || '',
-        displayName: user.user_metadata?.display_name || user.email?.split('@')[0] || 'User',
-        createdAt: user.created_at
+        displayName: user.displayName || user.email?.split('@')[0] || 'User',
+        createdAt: user.metadata.creationTime || new Date().toISOString()
       };
     }
     return null;
@@ -76,9 +69,7 @@ export const getUserProfile = async (uid: string): Promise<UserProfile | null> =
 };
 
 export const onAuthStateChange = (callback: (user: User | null) => void) => {
-  const { data } = supabase.auth.onAuthStateChange((event, session) => {
-    callback(session?.user || null);
+  return onAuthStateChanged(auth, (user) => {
+    callback(user);
   });
-
-  return data.subscription.unsubscribe;
 };

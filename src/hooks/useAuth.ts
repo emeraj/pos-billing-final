@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
+import { User } from 'firebase/auth';
 import { onAuthStateChange, signUp, signIn, logOut, getUserProfile, UserProfile } from '../services/authService';
 
 export const useAuth = () => {
@@ -15,7 +15,7 @@ export const useAuth = () => {
       
       if (user) {
         // Load user profile
-        const profile = await getUserProfile(user.id);
+        const profile = await getUserProfile(user.uid);
         setUserProfile(profile);
       } else {
         setUserProfile(null);
